@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Container, Button, Alert, Form } from 'react-bootstrap';
-import styled, {keyframes} from 'styled-components';
+import styled, { keyframes } from 'styled-components';
+import jsPDF from 'jspdf';
 
 // Keyframes for fade-in and fade-out animations
 const fadeIn = keyframes`
@@ -20,6 +21,7 @@ const fadeOut = keyframes`
     opacity: 0;
   }
 `;
+
 const PageWrapper = styled.div`
   background-color: white;
   min-height: 100vh;
@@ -158,6 +160,112 @@ function SummaryPage({ formData }) {
         }
     };
 
+    const generatePDF = () => {
+        const doc = new jsPDF();
+        let yPosition = 10; // Start y position for the content
+        const lineSpacing = 10; // Space between lines
+        const pageWidth = 180; // Define the maximum width for text (A4 width minus margins)
+        const pageHeight = doc.internal.pageSize.height; // Get the height of the page
+
+        doc.setFontSize(16);
+        doc.text('Generated Practice Material', 10, yPosition);
+        yPosition += lineSpacing;
+
+        if (response) {
+            const { category, ...content } = response;
+
+            doc.setFontSize(14);
+            doc.text(`Category: ${category}`, 10, yPosition);
+            yPosition += lineSpacing;
+
+            // Add the page overflow check after every content block
+            const checkPageOverflow = () => {
+                if (yPosition + lineSpacing > pageHeight - 20) {
+                    doc.addPage();
+                    yPosition = 10; // Reset yPosition for the new page
+                }
+            };
+
+            switch (category) {
+                case 'Flashcards':
+                    content.cards.forEach((card, index) => {
+                        const questionLines = doc.splitTextToSize(`Question: ${card.question}`, pageWidth);
+                        doc.text(questionLines, 10, yPosition);
+                        yPosition += questionLines.length * lineSpacing;
+                        checkPageOverflow(); // Check for page overflow
+
+                        const answerLines = doc.splitTextToSize(`Answer: ${card.answer}`, pageWidth);
+                        doc.text(answerLines, 10, yPosition);
+                        yPosition += answerLines.length * lineSpacing;
+                        checkPageOverflow(); // Check for page overflow
+                    });
+                    break;
+
+                case 'Long-Answer':
+                    content.questions.forEach((question, index) => {
+                        const questionLines = doc.splitTextToSize(`Question: ${question.question}`, pageWidth);
+                        doc.text(questionLines, 10, yPosition);
+                        yPosition += questionLines.length * lineSpacing;
+                        checkPageOverflow(); // Check for page overflow
+
+                        const answerLines = doc.splitTextToSize(`Answer: ${question.answer}`, pageWidth);
+                        doc.text(answerLines, 10, yPosition);
+                        yPosition += answerLines.length * lineSpacing;
+                        checkPageOverflow(); // Check for page overflow
+                    });
+                    break;
+
+                case 'Quiz':
+                    content.questions.forEach((question, index) => {
+                        const questionLines = doc.splitTextToSize(`Question: ${question.question}`, pageWidth);
+                        doc.text(questionLines, 10, yPosition);
+                        yPosition += questionLines.length * lineSpacing;
+                        checkPageOverflow(); // Check for page overflow
+
+                        const optionsLines = doc.splitTextToSize(`Options: ${question.options.join(', ')}`, pageWidth);
+                        doc.text(optionsLines, 10, yPosition);
+                        yPosition += optionsLines.length * lineSpacing;
+                        checkPageOverflow(); // Check for page overflow
+
+                        const correctAnswerLine = `Correct Answer: ${question.correctAnswer}`;
+                        doc.text(correctAnswerLine, 10, yPosition);
+                        yPosition += lineSpacing;
+                        checkPageOverflow(); // Check for page overflow
+                    });
+                    break;
+
+                case 'Project-Based':
+                    content.projects.forEach((project, index) => {
+                        const titleLines = doc.splitTextToSize(`Project: ${project.title}`, pageWidth);
+                        doc.text(titleLines, 10, yPosition);
+                        yPosition += titleLines.length * lineSpacing;
+                        checkPageOverflow(); // Check for page overflow
+
+                        const descriptionLines = doc.splitTextToSize(`Description: ${project.description}`, pageWidth);
+                        doc.text(descriptionLines, 10, yPosition);
+                        yPosition += descriptionLines.length * lineSpacing;
+                        checkPageOverflow(); // Check for page overflow
+
+                        project.steps.forEach((step, stepIndex) => {
+                            const stepLines = doc.splitTextToSize(`Step ${stepIndex + 1}: ${step}`, pageWidth);
+                            doc.text(stepLines, 10, yPosition);
+                            yPosition += stepLines.length * lineSpacing;
+                            checkPageOverflow(); // Check for page overflow
+                        });
+                        yPosition += lineSpacing; // Extra space between projects
+                        checkPageOverflow(); // Check for page overflow
+                    });
+                    break;
+
+                default:
+                    doc.text('No practice material available.', 10, yPosition);
+            }
+        }
+
+        doc.save('practice_material.pdf');
+    };
+
+
     return (
         <PageWrapper>
             <Container className="page-container">
@@ -169,15 +277,16 @@ function SummaryPage({ formData }) {
                 <Button onClick={handleSubmit} disabled={loading}>
                     {loading ? 'Generating...' : 'Generate Practice Material'}
                 </Button>
-
-                {error && <Alert variant="danger">{error}</Alert>}
-
                 {response && (
-                    <div>
-                        <h2>Generated Practice Material</h2>
-                        <RenderPracticeMaterial response={response} />
-                    </div>
+                    <>
+                        <div>
+                            <h2>Generated Practice Material</h2>
+                            <RenderPracticeMaterial response={response} />
+                        </div>
+                        <Button onClick={generatePDF}>Download PDF</Button>
+                    </>
                 )}
+                {error && <Alert variant="danger">{error}</Alert>}
             </Container>
         </PageWrapper>
     );
@@ -382,58 +491,58 @@ function Flashcards({ cards }) {
 function LongAnswer({ questions }) {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [showAnswer, setShowAnswer] = useState(false);
-  
+
     const handleNext = () => {
-      setShowAnswer(false);
-      setCurrentQuestionIndex((prevIndex) => (prevIndex + 1) % questions.length);
+        setShowAnswer(false);
+        setCurrentQuestionIndex((prevIndex) => (prevIndex + 1) % questions.length);
     };
-  
+
     const handlePrevious = () => {
-      setShowAnswer(false);
-      setCurrentQuestionIndex((prevIndex) => (prevIndex - 1 + questions.length) % questions.length);
+        setShowAnswer(false);
+        setCurrentQuestionIndex((prevIndex) => (prevIndex - 1 + questions.length) % questions.length);
     };
-  
+
     const toggleShowAnswer = () => {
-      setShowAnswer(!showAnswer);
+        setShowAnswer(!showAnswer);
     };
-  
+
     const currentQuestion = questions[currentQuestionIndex];
-  
+
     return (
-      <div className="flashcard-container">
-        <div className="question">
-          <p><strong>Question:</strong> {currentQuestion.question}</p>
+        <div className="flashcard-container">
+            <div className="question">
+                <p><strong>Question:</strong> {currentQuestion.question}</p>
+            </div>
+
+            <Form.Group className="answer-box">
+                <Form.Label>Type your answer:</Form.Label>
+                <textarea placeholder="Write your answer here..." />
+            </Form.Group>
+
+            <Button onClick={toggleShowAnswer}>
+                {showAnswer ? 'Hide Answer' : 'Show Answer'}
+            </Button>
+
+            {showAnswer && (
+                <div className="answer-box">
+                    <p><strong>Answer:</strong> {currentQuestion.answer}</p>
+                </div>
+            )}
+
+            <div className="navigation-buttons">
+                <Button onClick={handlePrevious}>Previous</Button>
+                <Button onClick={handleNext}>Next</Button>
+            </div>
+
+            <div className="dots">
+                {questions.map((_, index) => (
+                    <span
+                        key={index}
+                        className={`dot ${currentQuestionIndex === index ? 'active' : ''}`}
+                    ></span>
+                ))}
+            </div>
         </div>
-  
-        <Form.Group className="answer-box">
-          <Form.Label>Type your answer:</Form.Label>
-          <textarea placeholder="Write your answer here..." />
-        </Form.Group>
-  
-        <Button onClick={toggleShowAnswer}>
-          {showAnswer ? 'Hide Answer' : 'Show Answer'}
-        </Button>
-  
-        {showAnswer && (
-          <div className="answer-box">
-            <p><strong>Answer:</strong> {currentQuestion.answer}</p>
-          </div>
-        )}
-  
-        <div className="navigation-buttons">
-          <Button onClick={handlePrevious}>Previous</Button>
-          <Button onClick={handleNext}>Next</Button>
-        </div>
-  
-        <div className="dots">
-          {questions.map((_, index) => (
-            <span
-              key={index}
-              className={`dot ${currentQuestionIndex === index ? 'active' : ''}`}
-            ></span>
-          ))}
-        </div>
-      </div>
     );
 }
 
