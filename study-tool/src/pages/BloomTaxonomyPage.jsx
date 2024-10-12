@@ -1,36 +1,59 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Form, Button } from 'react-bootstrap';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
+
+// Keyframes for fade-in and fade-out transitions
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
+
+const fadeOut = keyframes`
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+`;
 
 const PageWrapper = styled.div`
-  /* General styles for the page */
   background-color: white;
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
 
+  &.fade-in {
+    animation: ${fadeIn} 0.5s ease-in-out;
+  }
+
+  &.fade-out {
+    animation: ${fadeOut} 0.5s ease-in-out;
+  }
+
   .page-container {
     max-width: 700px;
     text-align: center;
   }
 
-  /* Title styling */
   .title {
-    color: #AFCBFF; /* Pastel pink */
+    color: #AFCBFF;
     font-size: 2rem;
     margin-bottom: 20px;
   }
 
-  /* Description and text styling */
   .description {
     font-size: 1.2rem;
     color: #001f3f;
     margin-bottom: 30px;
   }
 
-  /* Dropdown styling */
   select {
     margin-top: 20px;
     font-size: 1rem;
@@ -40,7 +63,6 @@ const PageWrapper = styled.div`
     border: 1px solid #AFCBFF;
   }
 
-  /* Button styling */
   button {
     background-color: #FF9447;
     border: none;
@@ -58,15 +80,21 @@ const PageWrapper = styled.div`
 
 function BloomTaxonomyPage({ formData, setFormData }) {
   const [bloomLevel, setBloomLevel] = useState(formData.bloomLevel || '');
+  const [animationClass, setAnimationClass] = useState('fade-in');
   const navigate = useNavigate();
 
   const handleNext = () => {
-    setFormData({ ...formData, bloomLevel });
-    navigate('/concepts');
+    // Trigger fade-out animation
+    setAnimationClass('fade-out');
+    setTimeout(() => {
+      // After fade-out completes, navigate to the next page
+      setFormData({ ...formData, bloomLevel });
+      navigate('/concepts');
+    }, 500); // Match the animation duration
   };
 
   return (
-    <PageWrapper>
+    <PageWrapper className={animationClass}>
       <Container className="page-container">
         <h1 className="title">Bloom's Taxonomy Level</h1>
         <Form.Group>

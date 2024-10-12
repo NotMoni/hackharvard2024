@@ -1,36 +1,60 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Button, Form } from 'react-bootstrap';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
+
+// Keyframes for fade-in and fade-out transitions
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
+
+const fadeOut = keyframes`
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+`;
 
 const PageWrapper = styled.div`
-  /* General styles for the page */
   background-color: white;
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
 
+  /* Add fade-in or fade-out animation based on the class */
+  &.fade-in {
+    animation: ${fadeIn} 0.5s ease-in-out;
+  }
+
+  &.fade-out {
+    animation: ${fadeOut} 0.5s ease-in-out;
+  }
+
   .page-container {
-    max-width: 700px; /* Increased width for better layout */
+    max-width: 700px;
     text-align: center;
   }
 
-  /* Title styling */
   .title {
     color: #AFCBFF;
     font-size: 2rem;
     margin-bottom: 20px;
   }
 
-  /* Description and text styling */
   .description {
     font-size: 1.2rem;
     color: #001f3f;
     margin-bottom: 30px;
   }
 
-  /* Range container for positioning Declarative and Procedural */
   .range-container {
     display: flex;
     justify-content: space-between;
@@ -38,22 +62,19 @@ const PageWrapper = styled.div`
     margin-bottom: 30px;
   }
 
-  /* Declarative and Procedural labels */
   .range-label {
     font-size: 1.2rem;
     color: #001f3f;
-    width: 100px; /* Increased width for better alignment */
+    width: 100px;
     text-align: center;
   }
 
-  /* Slider styling */
   .range-slider {
-    flex-grow: 2; /* Make the slider take more space */
-    margin: 0 40px; /* Add more space between labels and slider */
-    accent-color: #FF9447; /* Pastel orange slider color */
+    flex-grow: 2;
+    margin: 0 40px;
+    accent-color: #FF9447;
   }
 
-  /* Button styling */
   button {
     background-color: #FF9447;
     border: none;
@@ -71,15 +92,21 @@ const PageWrapper = styled.div`
 
 function SubjectTypePage({ formData, setFormData }) {
   const [subjectType, setSubjectType] = useState(formData.subjectType || 3);
+  const [animationClass, setAnimationClass] = useState('fade-in');
   const navigate = useNavigate();
 
   const handleNext = () => {
-    setFormData({ ...formData, subjectType });
-    navigate('/bloom');
+    // Trigger fade-out animation
+    setAnimationClass('fade-out');
+    setTimeout(() => {
+      // After fade-out completes, navigate to the next page
+      setFormData({ ...formData, subjectType });
+      navigate('/bloom');
+    }, 500); // Match the animation duration
   };
 
   return (
-    <PageWrapper>
+    <PageWrapper className={animationClass}>
       <Container className="page-container">
         <h1 className="title">Subject Type</h1>
         <p className="description">

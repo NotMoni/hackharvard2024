@@ -1,36 +1,59 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Button, Form } from 'react-bootstrap';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
+
+// Keyframes for fade-in and fade-out animations
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
+
+const fadeOut = keyframes`
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+`;
 
 const PageWrapper = styled.div`
-  /* General styles for the page */
   background-color: white;
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
 
+  &.fade-in {
+    animation: ${fadeIn} 0.5s ease-in-out;
+  }
+
+  &.fade-out {
+    animation: ${fadeOut} 0.5s ease-in-out;
+  }
+
   .page-container {
     max-width: 700px;
     text-align: center;
   }
 
-  /* Title styling */
   .title {
     color: #AFCBFF; /* Pastel blue */
     font-size: 2rem;
     margin-bottom: 20px;
   }
 
-  /* Description and text styling */
   .description {
     font-size: 1.2rem;
     color: #001f3f;
     margin-bottom: 30px;
   }
 
-  /* Textarea styling */
   textarea {
     width: 100%;
     height: 150px;
@@ -41,7 +64,6 @@ const PageWrapper = styled.div`
     margin-bottom: 20px;
   }
 
-  /* Button styling */
   button {
     background-color: #FF9447;
     border: none;
@@ -59,15 +81,23 @@ const PageWrapper = styled.div`
 
 function ConceptsPage({ formData, setFormData }) {
   const [keyConcepts, setKeyConcepts] = useState(formData.keyConcepts || '');
+  const [animationClass, setAnimationClass] = useState('fade-in');
   const navigate = useNavigate();
 
   const handleNext = () => {
-    setFormData({ ...formData, keyConcepts });
-    navigate('/upload-resources');
+    setAnimationClass('fade-out');
+    setTimeout(() => {
+      setFormData({ ...formData, keyConcepts });
+      navigate('/upload-resources');
+    }, 500); // Animation duration
   };
 
+  useEffect(() => {
+    setAnimationClass('fade-in'); // Trigger fade-in on initial load
+  }, []);
+
   return (
-    <PageWrapper>
+    <PageWrapper className={animationClass}>
       <Container className="page-container">
         <h1 className="title">Key Concepts</h1>
         <Form.Group>

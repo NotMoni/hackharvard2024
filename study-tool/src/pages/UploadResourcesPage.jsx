@@ -1,15 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Button, Form } from 'react-bootstrap';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
+
+// Keyframes for fade-in and fade-out animations
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
+
+const fadeOut = keyframes`
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+`;
 
 const PageWrapper = styled.div`
-  /* General styles for the page */
   background-color: white;
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
+
+  &.fade-in {
+    animation: ${fadeIn} 0.5s ease-in-out;
+  }
+
+  &.fade-out {
+    animation: ${fadeOut} 0.5s ease-in-out;
+  }
 
   .page-container {
     max-width: 700px;
@@ -17,33 +43,15 @@ const PageWrapper = styled.div`
     padding: 20px;
   }
 
-  /* Title styling */
   .title {
-    color: #AFCBFF; /* Pastel green */
+    color: #AFCBFF;
     font-size: 2.5rem;
     margin-bottom: 30px;
   }
 
-  /* File input and description styling */
   .file-input {
     margin-top: 30px;
     margin-bottom: 30px;
-  }
-
-  /* Custom styled file upload button */
-  .file-upload-button {
-    background-color: #FF9447;
-    border: none;
-    padding: 12px 30px;
-    border-radius: 30px;
-    font-size: 1.1rem;
-    color: white;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-
-  .file-upload-button:hover {
-    background-color: #FFC04D;
   }
 
   .file-upload-label {
@@ -68,7 +76,6 @@ const PageWrapper = styled.div`
     color: #001f3f;
   }
 
-  /* Next button styling */
   button {
     background-color: #FF9447;
     border: none;
@@ -87,19 +94,27 @@ const PageWrapper = styled.div`
 
 function UploadResourcesPage({ formData, setFormData }) {
   const [files, setFiles] = useState(formData.files || []);
+  const [animationClass, setAnimationClass] = useState('fade-in');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setAnimationClass('fade-in'); // Trigger fade-in on page load
+  }, []);
 
   const handleFileChange = (e) => {
     setFiles(e.target.files);
   };
 
   const handleNext = () => {
-    setFormData({ ...formData, files });
-    navigate('/summary');
+    setAnimationClass('fade-out');
+    setTimeout(() => {
+      setFormData({ ...formData, files });
+      navigate('/summary');
+    }, 500); // Wait for fade-out animation to complete
   };
 
   return (
-    <PageWrapper>
+    <PageWrapper className={animationClass}>
       <Container className="page-container">
         <h1 className="title">Upload Resources</h1>
 

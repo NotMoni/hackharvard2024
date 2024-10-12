@@ -1,7 +1,25 @@
 import React, { useState } from 'react';
 import { Container, Button, Alert, Form } from 'react-bootstrap';
-import styled from 'styled-components';
+import styled, {keyframes} from 'styled-components';
 
+// Keyframes for fade-in and fade-out animations
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
+
+const fadeOut = keyframes`
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+`;
 const PageWrapper = styled.div`
   background-color: white;
   min-height: 100vh;
@@ -10,10 +28,18 @@ const PageWrapper = styled.div`
   align-items: center;
   padding: 20px;
 
+  &.fade-in {
+    animation: ${fadeIn} 0.5s ease-in-out;
+  }
+
+  &.fade-out {
+    animation: ${fadeOut} 0.5s ease-in-out;
+  }
+
   .page-container {
     max-width: 800px;
     text-align: center;
-    padding: 20px;
+    padding: 20px;  
   }
 
   .title {
