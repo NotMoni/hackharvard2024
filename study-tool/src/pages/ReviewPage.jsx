@@ -1,37 +1,7 @@
+// src/pages/ReviewPage.jsx
 import React, { useState } from 'react';
-import { Container, Button, Alert, Form } from 'react-bootstrap';
-import styled, { keyframes } from 'styled-components';
-import jsPDF from 'jspdf';
-// In SummaryPage.jsx
-
-
-// Keyframes for fade-in and fade-out animations
-const fadeIn = keyframes`
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-`;
-
-const fadeOut = keyframes`
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-`;
-
-const flipCard = keyframes`
-  from {
-    transform: rotateY(0);
-  }
-  to {
-    transform: rotateY(180deg);
-  }
-`;
+import { Container, Button, Form, Alert } from 'react-bootstrap';
+import styled from 'styled-components';
 
 const PageWrapper = styled.div`
   background-color: white;
@@ -40,14 +10,6 @@ const PageWrapper = styled.div`
   align-items: center;
   padding: 20px;
 
-  &.fade-in {
-    animation: ${fadeIn} 0.5s ease-in-out;
-  }
-
-  &.fade-out {
-    animation: ${fadeOut} 0.5s ease-in-out;
-  }
-
   .page-container {
     max-width: 800px;
     text-align: center;
@@ -55,19 +17,30 @@ const PageWrapper = styled.div`
   }
 
   .title {
-    color: #AFCBFF; /* Pastel blue */
+    color: #AFCBFF; 
     font-size: 2.5rem;
     margin-bottom: 30px;
   }
 
-  .summary-text {
-    font-size: 1.2rem;
-    color: #001f3f; /* Navy blue text */
-    margin-bottom: 15px;
+  .file-upload-label {
+    display: block;
+    background-color: #FF9447;
+    border-radius: 30px;
+    padding: 10px 20px;
+    font-size: 1.1rem;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin: 20px auto;
+    width: fit-content;
+  }
+
+  .file-upload-label:hover {
+    background-color: #FFC04D;
   }
 
   button {
-    background-color: #FF9447; /* Pastel orange */
+    background-color: #FF9447; 
     border: none;
     padding: 10px 30px;
     border-radius: 30px;
@@ -79,63 +52,9 @@ const PageWrapper = styled.div`
   }
 
   button:hover {
-    background-color: #FFC04D; /* Lighter orange on hover */
+    background-color: #FFC04D;
   }
-
-  .flashcard-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 30px;
-  }
-
-  .dots {
-    display: flex;
-    justify-content: center;
-    margin-top: 10px;
-  }
-
-  .dot {
-    height: 12px;
-    width: 12px;
-    margin: 0 5px;
-    background-color: #AFCBFF;
-    border-radius: 50%;
-    display: inline-block;
-    transition: background-color 0.3s ease;
-  }
-
-  .active {
-    background-color: #FF9447; /* Active dot color */
-  }
-
-  .navigation-buttons {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-  }
-
-  .answer-box {
-    margin-top: 20px;
-    text-align: left;
-    font-size: 1.2rem;
-  }
-
-  textarea {
-    width: 100%;
-    height: 100px;
-    margin-top: 10px;
-    padding: 10px;
-    border: 1px solid #AFCBFF;
-    border-radius: 10px;
-  }
-
-  .left-align {
-    text-align: left; /* For left-aligning options and steps */
-    margin-left: 20px;
-  }
-
-  /* Flashcard flip styling */
+      /* Flashcard flip styling */
   .flashcard {
     perspective: 1000px;
     width: 300px;
@@ -179,184 +98,61 @@ const PageWrapper = styled.div`
   }
 `;
 
-function SummaryPage({ formData }) {
-    const [response, setResponse] = useState(null);
-    const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(false);
+function ReviewPage() {
+  const [fileContent, setFileContent] = useState(null);
+  const [error, setError] = useState(null);
 
-    const handleSubmit = async () => {
-        setLoading(true);
-        setError(null);
-
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (file && file.name.endsWith('.kagm')) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
         try {
-            console.log(formData);
-            // Send formData to the backend
-            const response = await fetch('YOUR_BACKEND_URL', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData), // Send formData
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to send data');
-            }
-            
-            const responseData = await response.json();
-            setResponse(responseData);
-            setLoading(false);
-        } catch (error) {
-            console.error('Error:', error);
-            setError('An error occurred while sending the summary to the backend.');
-            setLoading(false);
+          const content = JSON.parse(event.target.result);
+          setFileContent(content);
+          setError(null);
+        } catch (err) {
+          setError('Invalid file format.');
+          setFileContent(null);
         }
-    };
+      };
+      reader.readAsText(file);
+      console.log(fileContent);
+    } else {
+      setError('Please upload a valid .kagm file.');
+      setFileContent(null);
+    }
+  };
 
-    const generatePDF = () => {
-        const doc = new jsPDF();
-        let yPosition = 10; // Start y position for the content
-        const lineSpacing = 10; // Space between lines
-        const pageWidth = 180; // Define the maximum width for text (A4 width minus margins)
-        const pageHeight = doc.internal.pageSize.height; // Get the height of the page
-
-        doc.setFontSize(16);
-        doc.text('Generated Practice Material', 10, yPosition);
-        yPosition += lineSpacing;
-
-        if (response) {
-            const { category, ...content } = response;
-
-            doc.setFontSize(14);
-            doc.text(`Category: ${category}`, 10, yPosition);
-            yPosition += lineSpacing;
-
-            const checkPageOverflow = () => {
-                if (yPosition + lineSpacing > pageHeight - 20) {
-                    doc.addPage();
-                    yPosition = 10; // Reset yPosition for the new page
-                }
-            };
-
-            switch (category) {
-                case 'Flashcards':
-                    content.cards.forEach((card) => {
-                        const questionLines = doc.splitTextToSize(`Question: ${card.question}`, pageWidth);
-                        doc.text(questionLines, 10, yPosition);
-                        yPosition += questionLines.length * lineSpacing;
-                        checkPageOverflow();
-
-                        const answerLines = doc.splitTextToSize(`Answer: ${card.answer}`, pageWidth);
-                        doc.text(answerLines, 10, yPosition);
-                        yPosition += answerLines.length * lineSpacing;
-                        checkPageOverflow();
-                    });
-                    break;
-
-                case 'Long-Answer':
-                    content.questions.forEach((question) => {
-                        const questionLines = doc.splitTextToSize(`Question: ${question.question}`, pageWidth);
-                        doc.text(questionLines, 10, yPosition);
-                        yPosition += questionLines.length * lineSpacing;
-                        checkPageOverflow();
-
-                        const answerLines = doc.splitTextToSize(`Answer: ${question.answer}`, pageWidth);
-                        doc.text(answerLines, 10, yPosition);
-                        yPosition += answerLines.length * lineSpacing;
-                        checkPageOverflow();
-                    });
-                    break;
-
-                case 'Quiz':
-                    content.questions.forEach((question) => {
-                        const questionLines = doc.splitTextToSize(`Question: ${question.question}`, pageWidth);
-                        doc.text(questionLines, 10, yPosition);
-                        yPosition += questionLines.length * lineSpacing;
-                        checkPageOverflow();
-
-                        const optionsLines = doc.splitTextToSize(`Options: ${question.options.join(', ')}`, pageWidth);
-                        doc.text(optionsLines, 10, yPosition);
-                        yPosition += optionsLines.length * lineSpacing;
-                        checkPageOverflow();
-
-                        const correctAnswerLine = `Correct Answer: ${question.correctAnswer}`;
-                        doc.text(correctAnswerLine, 10, yPosition);
-                        yPosition += lineSpacing;
-                        checkPageOverflow();
-                    });
-                    break;
-
-                case 'Project-Based':
-                    content.projects.forEach((project) => {
-                        const titleLines = doc.splitTextToSize(`Project: ${project.title}`, pageWidth);
-                        doc.text(titleLines, 10, yPosition);
-                        yPosition += titleLines.length * lineSpacing;
-                        checkPageOverflow();
-
-                        const descriptionLines = doc.splitTextToSize(`Description: ${project.description}`, pageWidth);
-                        doc.text(descriptionLines, 10, yPosition);
-                        yPosition += descriptionLines.length * lineSpacing;
-                        checkPageOverflow();
-
-                        project.steps.forEach((step, stepIndex) => {
-                            const stepLines = doc.splitTextToSize(`Step ${stepIndex + 1}: ${step}`, pageWidth);
-                            doc.text(stepLines, 10, yPosition);
-                            yPosition += stepLines.length * lineSpacing;
-                            checkPageOverflow();
-                        });
-                        yPosition += lineSpacing; // Extra space between projects
-                        checkPageOverflow();
-                    });
-                    break;
-
-                default:
-                    doc.text('No practice material available.', 10, yPosition);
-            }
-        }
-
-        doc.save('practice_material.pdf');
-    };
-
-    const generateKAGMFile = () => {
-        // Convert formData or response into JSON string
-        const dataToDownload = response ? JSON.stringify(response, null, 2) : JSON.stringify(formData, null, 2);
-        const blob = new Blob([dataToDownload], { type: 'text/plain' });
-        const url = window.URL.createObjectURL(blob);
-
-        // Create an anchor element and trigger download
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'study.kagm';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    };
-
-    return (
-        <PageWrapper>
-            <Container className="page-container">
-                <h1 className="title">Summary</h1>
-                <p className="summary-text"><strong>Subject Type:</strong> {formData.subjectType}</p>
-                <p className="summary-text"><strong>Bloom's Level:</strong> {formData.bloomLevel}</p>
-                <p className="summary-text"><strong>Files Uploaded:</strong> {formData.files ? formData.files.length : 0}</p>
-                <Button onClick={handleSubmit} disabled={loading}>
-                    {loading ? 'Generating...' : 'Generate Practice Material'}
-                </Button>
-                {response && (
-                    <>
-                        <div>
-                            <h2>Generated Practice Material</h2>
-                            <RenderPracticeMaterial response={response} />
-                        </div>
-                        <Button onClick={generatePDF}>Download PDF</Button>
-                        <Button onClick={generateKAGMFile}>Download .kagm File</Button>
-
-                    </>
-                )}
-                {error && <Alert variant="danger">{error}</Alert>}
-            </Container>
-        </PageWrapper>
-    );
+  return (
+    <PageWrapper>
+      <Container className="page-container">
+        <h1 className="title">Review Old Material</h1>
+        <Form.Group controlId="fileUpload" className="file-input">
+          <Form.Label className="file-upload-label" htmlFor="file-upload">
+            Select a .kagm file to upload
+          </Form.Label>
+          <Form.Control
+            id="file-upload"
+            type="file"
+            onChange={handleFileUpload}
+            accept=".kagm"
+            style={{ display: 'none' }} 
+          />
+        </Form.Group>
+        {error && <Alert variant="danger">{error}</Alert>}
+        {fileContent && (
+          <>
+            <div>
+              <h2>Practice Material</h2>
+              <RenderPracticeMaterial response={fileContent} />
+            </div>
+            {/* Optionally, you can add buttons to download PDF or .kagm again */}
+          </>
+        )}
+      </Container>
+    </PageWrapper>
+  );
 }
 
 function RenderPracticeMaterial({ response }) {
@@ -612,4 +408,4 @@ function LongAnswer({ questions }) {
     );
 }
 
-export default SummaryPage;
+export default ReviewPage;

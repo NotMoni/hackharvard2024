@@ -24,7 +24,6 @@ const fadeOut = keyframes`
 
 const PageWrapper = styled.div`
   background-color: white;
-  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -90,6 +89,16 @@ const PageWrapper = styled.div`
   button:hover {
     background-color: #FFC04D;
   }
+
+  .file-list {
+    text-align: left;
+    margin-top: 20px;
+  }
+
+  .file-list-item {
+    font-size: 1rem;
+    color: #333;
+  }
 `;
 
 function UploadResourcesPage({ formData, setFormData }) {
@@ -102,7 +111,8 @@ function UploadResourcesPage({ formData, setFormData }) {
   }, []);
 
   const handleFileChange = (e) => {
-    setFiles(e.target.files);
+    const newFiles = Array.from(e.target.files); // Convert FileList to an array
+    setFiles(prevFiles => [...prevFiles, ...newFiles]); // Append new files to the existing list
   };
 
   const handleNext = () => {
@@ -135,6 +145,19 @@ function UploadResourcesPage({ formData, setFormData }) {
 
         {/* Display file count */}
         <p className="file-count">{files.length} file(s) selected</p>
+
+        {/* Display file names */}
+        {files.length > 0 && (
+          <div className="file-list">
+            <ul>
+              {files.map((file, index) => (
+                <li key={index} className="file-list-item">
+                  {file.name}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         {/* Next button */}
         <Button onClick={handleNext}>Next</Button>

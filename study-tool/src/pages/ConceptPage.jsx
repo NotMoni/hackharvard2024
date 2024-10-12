@@ -24,7 +24,6 @@ const fadeOut = keyframes`
 
 const PageWrapper = styled.div`
   background-color: white;
-  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;

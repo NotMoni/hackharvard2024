@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Form, Button } from 'react-bootstrap';
 import styled, { keyframes } from 'styled-components';
+import { FaBrain, FaLightbulb, FaHandsHelping, FaSearch, FaBalanceScale, FaPencilRuler } from 'react-icons/fa';
 
 // Keyframes for fade-in and fade-out transitions
 const fadeIn = keyframes`
@@ -24,7 +25,6 @@ const fadeOut = keyframes`
 
 const PageWrapper = styled.div`
   background-color: white;
-  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -76,6 +76,20 @@ const PageWrapper = styled.div`
   button:hover {
     background-color: #FFC04D;
   }
+
+  .bloom-explanation {
+    display: flex;
+    align-items: center;
+    margin: 15px 0;
+    font-size: 1rem;
+    color: #001f3f;
+    text-align: left;
+  }
+
+  .bloom-explanation svg {
+    margin-right: 10px;
+    color: #AFCBFF;
+  }
 `;
 
 function BloomTaxonomyPage({ formData, setFormData }) {
@@ -112,7 +126,34 @@ function BloomTaxonomyPage({ formData, setFormData }) {
             <option value="Create">Create</option>
           </Form.Select>
         </Form.Group>
+
         <Button onClick={handleNext}>Next</Button>
+
+        {/* Static explanations for Bloom's Taxonomy levels with icons */}
+        <div className="bloom-explanation">
+          <FaBrain size={40}/>
+          <p><strong>Remember</strong>: Recall basic facts and concepts.</p>
+        </div>
+        <div className="bloom-explanation">
+          <FaLightbulb size={40}/>
+          <p><strong>Understand</strong>: Explain ideas or concepts.</p>
+        </div>
+        <div className="bloom-explanation">
+          <FaHandsHelping size={40}/>
+          <p><strong>Apply</strong>: Use information in new situations.</p>
+        </div>
+        <div className="bloom-explanation">
+          <FaSearch size={40}/>
+          <p><strong>Analyze</strong>: Draw connections among ideas.</p>
+        </div>
+        <div className="bloom-explanation">
+          <FaBalanceScale size={40} />
+          <p><strong>Evaluate</strong>: Justify a decision or action.</p>
+        </div>
+        <div className="bloom-explanation">
+          <FaPencilRuler size={40}/>
+          <p><strong>Create</strong>: Produce new or original work.</p>
+        </div>
       </Container>
     </PageWrapper>
   );
