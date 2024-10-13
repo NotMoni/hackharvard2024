@@ -24,9 +24,9 @@ app.options('*', cors());
 
 function getLearningActivity(cognitiveLevel, learningMode) {
   switch (cognitiveLevel) {
-    case 'remember':
+    case 'Remember':
       return 'flashcards';
-    case 'understand':
+    case 'Understand':
       switch (learningMode) {
         case 'pl':
         case 'dl':
@@ -35,7 +35,7 @@ function getLearningActivity(cognitiveLevel, learningMode) {
         case 'dm':
           return 'long answer';
       }
-    case 'apply':
+    case 'Apply':
       switch (learningMode) {
         case 'pl':
         case 'dl':
@@ -44,11 +44,11 @@ function getLearningActivity(cognitiveLevel, learningMode) {
         case 'dm':
           return 'long answer';
       }
-    case 'analyze':
+    case 'Analyze':
       return 'long answer';
-    case 'evaluate':
+    case 'Evaluate':
       return 'quiz';
-    case 'create':
+    case 'Create':
       return 'project';
     default:
       return 'Invalid cognitive level';
