@@ -192,6 +192,10 @@ app.get('/q', async (req, res) => {
       }
     });
   } else if (test_format == 'long answer') {
+    usr_msg = `Read the syllabus provided below and read the previous exam questions and their answers if provided.
+    Create a ${test_format} with detailed questions. The questions should strictly only center on the specific topics of the syllabus that are on Calculus, and should not test on aspects of the syllabus such as the grading breakdown, learning objectives, the course policies, the academic integrity policy, the accommodation policies, the make-up policies, or the dates to drop down.
+    The questions should be those which need a significant amount of reasoning to answer to, and should not be one word answers.
+    ${_text}`;
     completion = await openai.chat.completions.create({
       messages: [
         { role: "system", content: sys_msg },
@@ -227,6 +231,12 @@ app.get('/q', async (req, res) => {
       }
     });
   } else if (test_format == 'quiz') {
+    usr_msg = `Read the syllabus provided below and read the previous exam questions and their answers if provided.
+    Create a ${test_format} with detailed questions.  Incorporate a larger amount of information from the previous exam questions and their answers if provided.
+    If previous exam questions and answers are not provided, construct multiple choice questions which have options A, B, C, and D.
+    Only one of them should be the correct answer. The questions should strictly only center on the specific topics of the syllabus that are on Calculus, and should not test on aspects of the syllabus such as the grading breakdown, learning objectives, the course policies, the academic integrity policy, the accommodation policies, the make-up policies, or the dates to drop down.  The questions should not be word answers or long answers that require significant reasoning.
+    ${_text}`;
+
     completion = await openai.chat.completions.create({
       messages: [
         { role: "system", content: sys_msg },
@@ -266,6 +276,13 @@ app.get('/q', async (req, res) => {
       }
     });
   } else if (test_format == 'project') {
+    usr_msg = `Read the syllabus provided below and read the previous exam questions and their answers if provided.
+    Using the concepts given in the syllabus, create a multiple part question that centers on either one topic or more.
+    The projects should not test on aspects of the syllabus such as the grading breakdown, learning objectives, the course policies, the academic integrity policy, the accommodation policies, the make-up policies, or the dates to drop down.
+    The questions may require significant reasoning, and should consist of experiments and proofs.
+    No more than four parts are needed per question if the question is split into parts.  The questions should not be word answers in multiple choice answers.  Focus more on applications of the topic given in the syllabus.
+    ${_text}`;
+
     completion = await openai.chat.completions.create({
       messages: [
         { role: "system", content: sys_msg },
