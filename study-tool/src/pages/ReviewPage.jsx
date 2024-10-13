@@ -7,11 +7,12 @@ const PageWrapper = styled.div`
   background-color: white;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start; /* Changed to flex-start to prevent vertical centering */
   padding: 20px;
 
   .page-container {
-    max-width: 800px;
+    width: 100%; /* Changed to take full width */
+    max-width: 800px; /* Optional max-width */
     text-align: center;
     padding: 20px;  
   }
@@ -46,20 +47,30 @@ const PageWrapper = styled.div`
     border-radius: 30px;
     font-size: 1rem;
     color: white;
-    margin-top: 20px;
-    margin-right: 10px;
     transition: background-color 0.3s ease;
+    margin: 10px; /* Added margin for spacing */
   }
 
   button:hover {
     background-color: #FFC04D;
   }
-      /* Flashcard flip styling */
+
+  /* Flashcard container styling */
+  .flashcard-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center horizontally */
+    margin-top: 30px;
+    width: 100%; /* Ensure it takes full width */
+  }
+
+  /* Flashcard flip styling */
   .flashcard {
     perspective: 1000px;
-    width: 300px;
-    height: 200px;
-    margin: 20px 0;
+    width: 80%; /* Increased width to 80% */
+    max-width: 500px; /* Optional max-width */
+    height: 300px; /* Increased height */
+    margin: 20px auto; /* Center horizontally */
   }
 
   .flashcard-inner {
@@ -68,6 +79,7 @@ const PageWrapper = styled.div`
     transition: transform 0.6s;
     transform-style: preserve-3d;
     position: relative;
+    transform-origin: center; /* Ensure flip axis is centered */
   }
 
   .flip {
@@ -89,71 +101,160 @@ const PageWrapper = styled.div`
     padding: 20px;
     background-color: #AFCBFF;
     color: white;
-    font-size: 1.2rem;
+    font-size: 1.4rem; /* Increased font size */
+    text-align: center; /* Center text */
+    word-wrap: break-word; /* Handle long words */
+    word-break: break-word;
   }
 
   .flashcard-back {
     transform: rotateY(180deg);
     background-color: #FF9447;
   }
+
+  /* Navigation buttons styling */
+  .navigation-buttons {
+    display: flex;
+    justify-content: center; /* Center buttons horizontally */
+    align-items: center;
+    margin-top: 20px;
+  }
+
+  .navigation-buttons button {
+    margin: 0 10px; /* Spacing between buttons */
+  }
+
+  /* Dots styling */
+  .dots {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+  .dot {
+    height: 12px;
+    width: 12px;
+    margin: 0 5px;
+    background-color: #AFCBFF;
+    border-radius: 50%;
+    display: inline-block;
+    transition: background-color 0.3s ease;
+  }
+
+  .active {
+    background-color: #FF9447; /* Active dot color */
+  }
+
+  /* Additional styles for other components */
+  .question, .project-title, .project-description {
+    width: 80%; /* Increased width */
+    max-width: 600px; /* Optional max-width */
+    margin: 0 auto; /* Center horizontally */
+    text-align: center;
+  }
+
+  .answer-box, .project-steps, .left-align {
+    width: 80%; /* Increased width */
+    max-width: 600px; /* Optional max-width */
+    margin: 20px auto; /* Center horizontally and add spacing */
+  }
+
+  textarea {
+    width: 100%;
+    height: 100px;
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid #AFCBFF;
+    border-radius: 10px;
+  }
+
+  /* Adjust form check alignment */
+  .left-align {
+    text-align: left;
+  }
+
+  /* Adjust button spacing in forms */
+  .flashcard-container button,
+  .project-based-container button,
+  .quiz-container button,
+  .long-answer-container button {
+    margin: 10px;
+  }
 `;
 
 function ReviewPage() {
-  const [fileContent, setFileContent] = useState(null);
-  const [error, setError] = useState(null);
-
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    if (file && file.name.endsWith('.kagm')) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        try {
-          const content = JSON.parse(event.target.result);
-          setFileContent(content);
-          setError(null);
-        } catch (err) {
-          setError('Invalid file format.');
-          setFileContent(null);
-        }
-      };
-      reader.readAsText(file);
-      console.log(fileContent);
-    } else {
-      setError('Please upload a valid .kagm file.');
-      setFileContent(null);
-    }
-  };
-
-  return (
-    <PageWrapper>
-      <Container className="page-container">
-        <h1 className="title">Review Old Material</h1>
-        <Form.Group controlId="fileUpload" className="file-input">
-          <Form.Label className="file-upload-label" htmlFor="file-upload">
-            Select a .kagm file to upload
-          </Form.Label>
-          <Form.Control
-            id="file-upload"
-            type="file"
-            onChange={handleFileUpload}
-            accept=".kagm"
-            style={{ display: 'none' }} 
-          />
-        </Form.Group>
-        {error && <Alert variant="danger">{error}</Alert>}
-        {fileContent && (
-          <>
-            <div>
-              <h2>Practice Material</h2>
-              <RenderPracticeMaterial response={fileContent} />
-            </div>
-            {/* Optionally, you can add buttons to download PDF or .kagm again */}
-          </>
-        )}
-      </Container>
-    </PageWrapper>
-  );
-}
+    const [fileContent, setFileContent] = useState(null);
+    const [error, setError] = useState(null);
+  
+    const handleFileUpload = (e) => {
+      const file = e.target.files[0];
+      if (file && file.name.endsWith('.kagm')) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          try {
+            const content = JSON.parse(event.target.result);
+            setFileContent(content);
+            setError(null);
+          } catch (err) {
+            setError('Invalid file format.');
+            setFileContent(null);
+          }
+        };
+        reader.readAsText(file);
+      } else {
+        setError('Please upload a valid .kagm file.');
+        setFileContent(null);
+      }
+    };
+  
+    return (
+      <PageWrapper>
+        <Container className="page-container">
+          {fileContent ? (
+            <>
+              {/* When a file is uploaded, hide everything else and display only the change file button and practice material */}
+              <Form.Group controlId="fileUpload" className="file-input">
+                <Form.Label className="file-upload-label" htmlFor="file-upload">
+                  Change File
+                </Form.Label>
+                <Form.Control
+                  id="file-upload"
+                  type="file"
+                  onChange={handleFileUpload}
+                  accept=".kagm"
+                  style={{ display: 'none' }}
+                />
+              </Form.Group>
+  
+              {/* Display the practice material */}
+              <div>
+                <RenderPracticeMaterial response={fileContent} />
+              </div>
+            </>
+          ) : (
+            <>
+              {/* When no file is uploaded, display the title, upload button, and any errors */}
+              <h1 className="title">Review Old Material</h1>
+              <Form.Group controlId="fileUpload" className="file-input">
+                <Form.Label className="file-upload-label" htmlFor="file-upload">
+                  Select a .kagm file to upload
+                </Form.Label>
+                <Form.Control
+                  id="file-upload"
+                  type="file"
+                  onChange={handleFileUpload}
+                  accept=".kagm"
+                  style={{ display: 'none' }}
+                />
+              </Form.Group>
+              {error && <Alert variant="danger">{error}</Alert>}
+            </>
+          )}
+        </Container>
+      </PageWrapper>
+    );
+  }
+  
 
 function RenderPracticeMaterial({ response }) {
     const { category, ...content } = response;

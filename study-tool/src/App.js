@@ -29,8 +29,8 @@ function App() {
         >
           <img
             src="logo.png"
-            width={100}
-            height={100}
+            width={150}
+            height={150}
             alt="Study Tool Logo"
             style={{
               display: 'block',

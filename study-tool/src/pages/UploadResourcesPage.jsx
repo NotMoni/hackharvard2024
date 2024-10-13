@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Button, Form } from 'react-bootstrap';
 import styled, { keyframes } from 'styled-components';
+import pdfToText from 'react-pdftotext';
 
 // Keyframes for fade-in and fade-out animations
 const fadeIn = keyframes`
@@ -27,6 +28,7 @@ const PageWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 20px;
 
   &.fade-in {
     animation: ${fadeIn} 0.5s ease-in-out;
@@ -103,6 +105,7 @@ const PageWrapper = styled.div`
 
 function UploadResourcesPage({ formData, setFormData }) {
   const [files, setFiles] = useState(formData.files || []);
+  const [pdfTexts, setPdfTexts] = useState([]); // To store extracted text from PDFs
   const [animationClass, setAnimationClass] = useState('fade-in');
   const navigate = useNavigate();
 
@@ -110,17 +113,37 @@ function UploadResourcesPage({ formData, setFormData }) {
     setAnimationClass('fade-in'); // Trigger fade-in on page load
   }, []);
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const newFiles = Array.from(e.target.files); // Convert FileList to an array
-    setFiles(prevFiles => [...prevFiles, ...newFiles]); // Append new files to the existing list
+    setFiles((prevFiles) => [...prevFiles, ...newFiles]); // Append new files to the existing list
+
+    // Extract text from PDFs if there are any PDFs uploaded
+    const pdfFiles = newFiles.filter((file) => file.type === 'application/pdf');
+    const extractedTexts = await Promise.all(
+      pdfFiles.map((file) => extractTextFromPDF(file))
+    );
+
+    // Append new extracted texts to existing pdfTexts state
+    setPdfTexts((prevTexts) => [...prevTexts, ...extractedTexts]);
   };
 
   const handleNext = () => {
     setAnimationClass('fade-out');
     setTimeout(() => {
-      setFormData({ ...formData, files });
+      setFormData({ ...formData, files, pdfTexts });
       navigate('/summary');
     }, 500); // Wait for fade-out animation to complete
+  };
+
+  // Function to extract text from PDF
+  const extractTextFromPDF = async (file) => {
+    try {
+      const text = await pdfToText(file);
+      return { name: file.name, text }; // Return an object with file name and extracted text
+    } catch (error) {
+      console.error('Failed to extract text from PDF:', error);
+      return { name: file.name, text: 'Failed to extract text' }; // Return error message as text
+    }
   };
 
   return (
@@ -153,6 +176,21 @@ function UploadResourcesPage({ formData, setFormData }) {
               {files.map((file, index) => (
                 <li key={index} className="file-list-item">
                   {file.name}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* Display extracted PDF text */}
+        {pdfTexts.length > 0 && (
+          <div className="file-list">
+            <h3>Extracted PDF Texts</h3>
+            <ul>
+              {pdfTexts.map((pdf, index) => (
+                <li key={index} className="file-list-item">
+                  <strong>{pdf.name}:</strong> {pdf.text.substring(0, 100)}...
+                  {/* Preview first 100 characters */}
                 </li>
               ))}
             </ul>

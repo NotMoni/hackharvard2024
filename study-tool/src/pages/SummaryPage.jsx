@@ -191,7 +191,7 @@ function SummaryPage({ formData }) {
         try {
             console.log(formData);
             // Send formData to the backend
-            const response = await fetch('YOUR_BACKEND_URL', {
+            const response = await fetch('http://10.253.134.164:3000/q', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -334,28 +334,38 @@ function SummaryPage({ formData }) {
 
     return (
         <PageWrapper>
-            <Container className="page-container">
-                <h1 className="title">Summary</h1>
-                <p className="summary-text"><strong>Subject Type:</strong> {formData.subjectType}</p>
-                <p className="summary-text"><strong>Bloom's Level:</strong> {formData.bloomLevel}</p>
-                <p className="summary-text"><strong>Files Uploaded:</strong> {formData.files ? formData.files.length : 0}</p>
-                <Button onClick={handleSubmit} disabled={loading}>
-                    {loading ? 'Generating...' : 'Generate Practice Material'}
-                </Button>
-                {response && (
-                    <>
-                        <div>
-                            <h2>Generated Practice Material</h2>
-                            <RenderPracticeMaterial response={response} />
-                        </div>
-                        <Button onClick={generatePDF}>Download PDF</Button>
-                        <Button onClick={generateKAGMFile}>Download .kagm File</Button>
-
-                    </>
-                )}
-                {error && <Alert variant="danger">{error}</Alert>}
-            </Container>
-        </PageWrapper>
+        <Container className="page-container">
+          {!response && (
+            <>
+              {/* Render the summary only when response is not available */}
+              <h1 className="title">Summary</h1>
+              <p className="summary-text">
+                <strong>Subject Type:</strong> {formData.subjectType}
+              </p>
+              <p className="summary-text">
+                <strong>Bloom's Level:</strong> {formData.bloomLevel}
+              </p>
+              <p className="summary-text">
+                <strong>Files Uploaded:</strong>{" "}
+                {formData.files ? formData.files.length : 0}
+              </p>
+              <Button onClick={handleSubmit} disabled={loading}>
+                {loading ? "Generating..." : "Generate Practice Material"}
+              </Button>
+              {error && <Alert variant="danger">{error}</Alert>}
+            </>
+          )}
+  
+          {response && (
+            <>
+              {/* Render the practice material when response is available */}
+              <RenderPracticeMaterial response={response} />
+              <Button onClick={generatePDF}>Download PDF</Button>
+              <Button onClick={generateKAGMFile}>Download .kagm File</Button>
+            </>
+          )}
+        </Container>
+      </PageWrapper>
     );
 }
 

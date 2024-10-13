@@ -6,7 +6,7 @@ import styled from 'styled-components';
 
 const PageWrapper = styled.div`
   background-color: white;
-  min-height: 100vh;
+  min-height: 50vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -64,7 +64,7 @@ function HomePage() {
   return (
     <PageWrapper>
       <Container className="page-container">
-        <h1 className="title">Welcome to the Study Tool</h1>
+        <h1 className="title">Hi, I'm the Teaching Assassin!</h1>
         <p className="description">What would you like to do today?</p>
         <div className="button-group">
           <Button onClick={handleLearnNew}>Learn New Material</Button>

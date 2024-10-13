@@ -98,14 +98,14 @@ function ConceptsPage({ formData, setFormData }) {
   return (
     <PageWrapper className={animationClass}>
       <Container className="page-container">
-        <h1 className="title">Key Concepts</h1>
+        <h1 className="title">Course Content / Syllabus</h1>
         <Form.Group>
-          <Form.Label>Enter key concepts separated by commas:</Form.Label>
+          <Form.Label>Ensure the class name, and the key topics are included!</Form.Label>
           <Form.Control
             as="textarea"
             value={keyConcepts}
             onChange={(e) => setKeyConcepts(e.target.value)}
-            placeholder="Enter key concepts..."
+            placeholder="Paste your text..."
           />
         </Form.Group>
         <Button onClick={handleNext}>Next</Button>

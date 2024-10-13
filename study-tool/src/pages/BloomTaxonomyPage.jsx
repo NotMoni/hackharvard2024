@@ -154,6 +154,7 @@ function BloomTaxonomyPage({ formData, setFormData }) {
           <FaPencilRuler size={40}/>
           <p><strong>Create</strong>: Produce new or original work.</p>
         </div>
+        <div><a href="https://coffee-cortney-23.tiiny.site" target="_blank" rel="noreferrer">Learn more</a></div>
       </Container>
     </PageWrapper>
   );

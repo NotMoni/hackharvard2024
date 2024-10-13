@@ -171,7 +171,7 @@ function SubjectTypePage({ formData, setFormData }) {
           <p>{selectedDescription.types}</p>
           <p>{selectedDescription.examples}</p>
         </div>
-
+        <div><a href="https://coffee-cortney-23.tiiny.site" target="_blank" rel="noreferrer">Learn more</a></div>
         <Button onClick={handleNext}>Next</Button>
       </Container>
     </PageWrapper>
