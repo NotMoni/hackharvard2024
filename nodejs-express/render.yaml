@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: nodejs-express-app
+    env: docker
+    plan: free    # Change this to 'starter' or 'standard' depending on your needs
+    dockerfilePath: ./Dockerfile  # Path to your Dockerfile
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+    healthCheckPath: /  # The path Render uses to check if your app is healthy (adjust if needed)
+    autoDeploy: true  # Automatically deploy on Git push
+    buildCommand: ""   # Empty if using Docker
+    startCommand: ""   # Empty if using Docker

@@ -1,22 +1,23 @@
 const express = require('express');
-const multer = require('multer');
-const fs = require('fs');
-const path = require('path');
 const OpenAI = require('openai');
+const cors = require('cors');
 require('dotenv').config();
-
-defang
 
 const app = express();
 const port = 3000;
 
 const key = process.env.OPENAI_API_KEY;
 
+console.log(key);
+
 const openai = new OpenAI({
   apiKey: key,
 });
 
 app.use(express.json());
+app.use(cors());
+
+app.options('*', cors());
 
 function getLearningActivity(cognitiveLevel, learningMode) {
   switch (cognitiveLevel) {

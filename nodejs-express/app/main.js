@@ -1,5 +1,6 @@
 const express = require('express');
 const OpenAI = require('openai');
+const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
@@ -7,11 +8,20 @@ const port = 3000;
 
 const key = process.env.OPENAI_API_KEY;
 
+console.log(key);
+
 const openai = new OpenAI({
     apiKey: key,
 });
 
 app.use(express.json());
+app.use(cors());
+
+app.options('*', cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 function getLearningActivity(cognitiveLevel, learningMode) {
     switch (cognitiveLevel) {
@@ -46,7 +56,7 @@ function getLearningActivity(cognitiveLevel, learningMode) {
     }
 }
 
-app.get('/q', async (req, res) => {
+app.post('/q', async (req, res) => {
     const { bloomLevel, pdfTexts, keyConcepts, subjectType } = req.body;
 
     let sys_msg = "";
