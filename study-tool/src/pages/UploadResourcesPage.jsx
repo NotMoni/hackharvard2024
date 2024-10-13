@@ -150,7 +150,7 @@ function UploadResourcesPage({ formData, setFormData }) {
     <PageWrapper className={animationClass}>
       <Container className="page-container">
         <h1 className="title">Upload Resources</h1>
-
+        <p>Upload Practice Questions, Exams, etc.</p>
         {/* Custom file input */}
         <Form.Group controlId="fileUpload" className="file-input">
           <Form.Label className="file-upload-label" htmlFor="file-upload">
