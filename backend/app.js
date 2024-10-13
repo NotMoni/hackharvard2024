@@ -13,12 +13,9 @@ const port = process.env.PORT | 3000;
 
 const key = process.env.OPENAI_API_KEY;
 
-console.log(key);
-
 const openai = new OpenAI({
   apiKey: key,
 });
-// app.use(express.json());
 
 app.options('*', cors());
 
@@ -61,7 +58,6 @@ app.post('/q', async (req, res) => {
   let sys_msg = "";
   let usr_msg = "";
 
-  let json_res = "";
   let _text = "";
   let test_format = "";
 
@@ -107,7 +103,7 @@ app.post('/q', async (req, res) => {
   if (test_format == 'flashcards') {
     usr_msg = `Read the syllabus provided below and read the previous exam questions and their answers if provided.
       Create a ${test_format} with detailed questions.
-      The questions should strictly only center on the specific topics of the syllabus that are on Calculus, and should not test on aspects of the syllabus such as the grading breakdown, learning objectives, the course policies, the academic integrity policy, the accommodation policies, the make-up policies, or the dates to drop down.
+      The questions should strictly only center on the specific topics of the given syllabus, and should not test on aspects of the syllabus such as the grading breakdown, learning objectives, the course policies, the academic integrity policy, the accommodation policies, the make-up policies, or the dates to drop down. Do not bring in other subject.
       ${_text}`;
 
     completion = await openai.chat.completions.create({
@@ -146,7 +142,7 @@ app.post('/q', async (req, res) => {
     });
   } else if (test_format == 'long answer') {
     usr_msg = `Read the syllabus provided below and read the previous exam questions and their answers if provided.
-    Create a ${test_format} with detailed questions. The questions should strictly only center on the specific topics of the syllabus that are on Calculus, and should not test on aspects of the syllabus such as the grading breakdown, learning objectives, the course policies, the academic integrity policy, the accommodation policies, the make-up policies, or the dates to drop down.
+    Create a ${test_format} with detailed questions. The questions should strictly only center on the specific topics of the syllabus, and should not test on aspects of the syllabus such as the grading breakdown, learning objectives, the course policies, the academic integrity policy, the accommodation policies, the make-up policies, or the dates to drop down.
     The questions should be those which need a significant amount of reasoning to answer to, and should not be one word answers.
     ${_text}`;
     completion = await openai.chat.completions.create({
@@ -187,7 +183,7 @@ app.post('/q', async (req, res) => {
     usr_msg = `Read the syllabus provided below and read the previous exam questions and their answers if provided.
     Create a ${test_format} with detailed questions.  Incorporate a larger amount of information from the previous exam questions and their answers if provided.
     If previous exam questions and answers are not provided, construct multiple choice questions which have options A, B, C, and D.
-    Only one of them should be the correct answer. The questions should strictly only center on the specific topics of the syllabus that are on Calculus, and should not test on aspects of the syllabus such as the grading breakdown, learning objectives, the course policies, the academic integrity policy, the accommodation policies, the make-up policies, or the dates to drop down.  The questions should not be word answers or long answers that require significant reasoning.
+    Only one of them should be the correct answer. The questions should strictly only center on the specific topics of the syllabus, and should not test on aspects of the syllabus such as the grading breakdown, learning objectives, the course policies, the academic integrity policy, the accommodation policies, the make-up policies, or the dates to drop down.  The questions should not be word answers or long answers that require significant reasoning.
     ${_text}`;
 
     completion = await openai.chat.completions.create({
