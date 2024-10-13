@@ -5,7 +5,7 @@ const path = require('path');
 const OpenAI = require('openai');
 require('dotenv').config();
 
-
+defang
 
 const app = express();
 const port = 3000;
