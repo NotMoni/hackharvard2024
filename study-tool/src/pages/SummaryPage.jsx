@@ -191,7 +191,7 @@ function SummaryPage({ formData }) {
         try {
             console.log(formData);
             // Send formData to the backend
-            const response = await fetch('http://10.253.134.164:3000/q', {
+            const response = await fetch('https://hackharvard2024-4shg.onrender.com/q', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
