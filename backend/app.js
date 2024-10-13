@@ -54,7 +54,7 @@ function getLearningActivity(cognitiveLevel, learningMode) {
   }
 }
 
-app.get('/q', async (req, res) => {
+app.post('/q', async (req, res) => {
   const { bloomLevel, pdfTexts, keyConcepts, subjectType } = req.body;
 
   let sys_msg = "";
