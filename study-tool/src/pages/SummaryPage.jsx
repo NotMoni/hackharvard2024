@@ -191,7 +191,7 @@ function SummaryPage({ formData }) {
         try {
             console.log(formData);
             // Send formData to the backend
-            const response = await fetch('https://hackharvard2024-4shg.onrender.com/q', {
+            const response = await fetch('https://hackharvard24-c8b55061b5a8.herokuapp.com/q', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
