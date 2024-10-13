@@ -1,7 +1,4 @@
 const express = require('express');
-const multer = require('multer');
-const fs = require('fs');
-const path = require('path');
 const OpenAI = require('openai');
 require('dotenv').config();
 
