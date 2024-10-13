@@ -5,8 +5,6 @@ const path = require('path');
 const OpenAI = require('openai');
 require('dotenv').config();
 
-const z = require('zod');
-const { zodResponseFormat } = require("openai/helpers/zod");
 
 
 const app = express();
@@ -52,55 +50,6 @@ function getLearningActivity(cognitiveLevel, learningMode) {
       return 'Invalid cognitive level';
   }
 }
-
-const Cards = z.object({
-  "question": z.string(),
-  "answer": z.string(),
-});
-
-const Flashcards = z.object({
-  "category": "Flashcards",
-  "cards": z.array(Cards)
-}
-);
-
-const QandA = z.object({
-  "question": z.string(),
-  "answer": z.string()
-});
-
-const LongAnswer = z.object({
-  "category": "Long-Answer",
-  "questions": z.array(QandA)
-});
-
-const McQ = z.object({
-  "question": z.string(),
-  "answers": [z.string(), z.string(), z.string(), z.string()],
-  "correctAnswer": z.string()
-});
-
-const Quiz = z.object({
-  "category": "Quiz",
-  "questions": z.array(McQ)
-});
-
-const ProjectDetails = z.object({
-  "title": z.string(),
-  "description": z.string(),
-  "steps": [
-    `Step 1: ${z.string()}`,
-    `Step 2: ${z.string()}`,
-    `Step 3: ${z.string()}`,
-    `Step 4: ${z.string()}`,
-    `Step 5: ${z.string()}`
-  ]
-});
-
-const Project = z.object({
-  "category": "Project-Based",
-  "projects": z.array(ProjectDetails)
-});
 
 app.get('/q', async (req, res) => {
   const { bloomLevel, pdfTexts, keyConcepts, subjectType } = req.body;
