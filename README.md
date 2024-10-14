@@ -1,5 +1,5 @@
 ## Inspiration
-The inspiration behind Teaching Assassin came from our collective experiences as students and teaching assistants. Krish is a TA at Northeastern University, Monishwar taught classes online, Ganeshkumar taught Java, and Ayaman conducted research on how students learn effectively. As a team, we all shared a passion for education and recognized the common challenges students face.
+The inspiration behind Teaching Assassin came from our collective experiences as students and teaching assistants. Krish is a TA at Northeastern University, Monishwar taught classes online, Ganeshkumar taught Java, and Ayman conducted research on how students learn effectively. As a team, we all shared a passion for education and recognized the common challenges students face.
 
 We wanted to address issues such as unclear lectures, high teacher-to-student ratios, lack of personalized feedback, and not knowing the most effective way to study for a subject. Many students struggle with how to structure their learning for tests, midterms, or assignments, not knowing what questions to ask themselves. With Teaching Assassin, we set out to create an edtech platform that provides personalized learning techniques tailored to each student's unique needs, helping them discover the best way to study.
 
